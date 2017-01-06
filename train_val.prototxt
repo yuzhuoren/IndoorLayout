@@ -1,0 +1,233 @@
+# image data
+layers {
+  name: "data"
+  type: DATA
+  top: "data"
+  data_param {
+    source: "./lmdb_parts-1/train-image-lmdb"
+    backend: LMDB
+    batch_size: 1  # for reshaping -- see PR #1313
+  }
+  transform_param {
+    # BGR channel-wise mean
+    mean_value: 0.4182
+    mean_value: 0.4751
+    mean_value: 0.5416
+    scale: 255  
+  }
+  include: { phase: TRAIN }
+}
+
+# BB label
+layers {
+  name: "label-BB"
+  type: DATA
+  top: "label-BB"
+  data_param {
+    source: "./lmdb_parts-1/train-bb_label-lmdb"
+    backend: LMDB
+    batch_size: 1
+  }
+  include: { phase: TRAIN }
+}
+
+# GC label
+layers {
+  name: "label-GC"
+  type: DATA
+  top: "label-GC"
+  data_param {
+    source: "./lmdb_parts-1/train-gc_label-lmdb"
+    backend: LMDB
+    batch_size: 1
+  }
+  include: { phase: TRAIN }
+}
+
+#########
+## TEST
+#########
+
+# image data
+layers {
+  name: "data"
+  type: DATA
+  top: "data"
+  data_param {
+    source: "./lmdb_parts-1/test-image-lmdb"
+    backend: LMDB
+    batch_size: 1
+  }
+  transform_param {
+    # BGR channel-wise mean
+    mean_value: 0.4182
+    mean_value: 0.4751
+    mean_value: 0.5416
+    scale: 255  
+  }
+  include: { phase: TEST }
+}
+
+# BB label
+layers {
+  name: "label-BB"
+  type: DATA
+  top: "label-BB"
+  data_param {
+    source: "./lmdb_parts-1/test-bb_label-lmdb"
+    backend: LMDB
+    batch_size: 1
+  }
+  include: { phase: TEST }
+}
+
+# GC label
+layers {
+  name: "label-GC"
+  type: DATA
+  top: "label-GC"
+  data_param {
+    source: "./lmdb_parts-1/test-gc_label-lmdb"
+    backend: LMDB
+    batch_size: 1
+  }
+  include: { phase: TEST }
+}
+
+###############
+## CONV LAYERS
+###############
+
+layers { bottom: 'data' top: 'conv1_1' name: 'conv1_1' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 64 pad: 100 kernel_size: 3 } }
+layers { bottom: 'conv1_1' top: 'conv1_1' name: 'relu1_1' type: RELU }
+
+layers { bottom: 'conv1_1' top: 'conv1_2' name: 'conv1_2' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 64 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv1_2' top: 'conv1_2' name: 'relu1_2' type: RELU }
+layers { name: 'pool1' bottom: 'conv1_2' top: 'pool1' type: POOLING
+  pooling_param { pool: MAX kernel_size: 2 stride: 2 } }
+
+layers { name: 'conv2_1' bottom: 'pool1' top: 'conv2_1' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 128 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv2_1' top: 'conv2_1' name: 'relu2_1' type: RELU }
+
+layers { bottom: 'conv2_1' top: 'conv2_2' name: 'conv2_2' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 128 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv2_2' top: 'conv2_2' name: 'relu2_2' type: RELU }
+layers { bottom: 'conv2_2' top: 'pool2' name: 'pool2' type: POOLING
+  pooling_param { pool: MAX kernel_size: 2 stride: 2 } }
+
+layers { bottom: 'pool2' top: 'conv3_1' name: 'conv3_1' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 256 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv3_1' top: 'conv3_1' name: 'relu3_1' type: RELU }
+
+layers { bottom: 'conv3_1' top: 'conv3_2' name: 'conv3_2' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 256 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv3_2' top: 'conv3_2' name: 'relu3_2' type: RELU }
+
+layers { bottom: 'conv3_2' top: 'conv3_3' name: 'conv3_3' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 256 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv3_3' top: 'conv3_3' name: 'relu3_3' type: RELU }
+layers { bottom: 'conv3_3' top: 'pool3' name: 'pool3' type: POOLING
+  pooling_param { pool: MAX kernel_size: 2 stride: 2 } }
+
+layers { bottom: 'pool3' top: 'conv4_1' name: 'conv4_1' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 512 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv4_1' top: 'conv4_1' name: 'relu4_1' type: RELU }
+
+layers { bottom: 'conv4_1' top: 'conv4_2' name: 'conv4_2' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 512 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv4_2' top: 'conv4_2' name: 'relu4_2' type: RELU }
+
+layers { bottom: 'conv4_2' top: 'conv4_3' name: 'conv4_3' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 512 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv4_3' top: 'conv4_3' name: 'relu4_3' type: RELU }
+layers { bottom: 'conv4_3' top: 'pool4' name: 'pool4' type: POOLING
+  pooling_param { pool: MAX kernel_size: 2 stride: 2 } }
+
+layers { bottom: 'pool4' top: 'conv5_1' name: 'conv5_1' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 512 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv5_1' top: 'conv5_1' name: 'relu5_1' type: RELU }
+
+layers { bottom: 'conv5_1' top: 'conv5_2' name: 'conv5_2' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 512 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv5_2' top: 'conv5_2' name: 'relu5_2' type: RELU }
+
+layers { bottom: 'conv5_2' top: 'conv5_3' name: 'conv5_3' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE num_output: 512 pad: 1 kernel_size: 3 } }
+layers { bottom: 'conv5_3' top: 'conv5_3' name: 'relu5_3' type: RELU }
+layers { bottom: 'conv5_3' top: 'pool5' name: 'pool5' type: POOLING
+  pooling_param { pool: MAX kernel_size: 2 stride: 2 } }
+
+layers { bottom: 'pool5' top: 'fc6' name: 'fc6' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE kernel_size: 7 num_output: 4096 } }
+layers { bottom: 'fc6' top: 'fc6' name: 'relu6' type: RELU }
+layers { bottom: 'fc6' top: 'fc6' name: 'drop6' type: DROPOUT
+  dropout_param { dropout_ratio: 0.5 } }
+
+layers { bottom: 'fc6' top: 'fc7' name: 'fc7' type: CONVOLUTION
+  blobs_lr: 1 blobs_lr: 2 weight_decay: 1 weight_decay: 0
+  convolution_param { engine: CAFFE kernel_size: 1 num_output: 4096 } }
+layers { bottom: 'fc7' top: 'fc7' name: 'relu7' type: RELU }
+layers { bottom: 'fc7' top: 'fc7' name: 'drop7' type: DROPOUT
+  dropout_param { dropout_ratio: 0.5 } }
+
+##########
+## for BB
+##########
+
+layers { name: 'fc8-BB' type: CONVOLUTION bottom: 'fc7' top: 'fc8-BB'
+  blobs_lr: 10 blobs_lr: 20 weight_decay: 1 weight_decay: 0
+  convolution_param { weight_filler {type: "xavier"} bias_filler {type: "constant"} engine: CAFFE num_output: 2 kernel_size: 1 } }
+
+layers { type: DECONVOLUTION name: 'upscore-BB' bottom: 'fc8-BB' top:'upscore-BB'
+  blobs_lr: 10 blobs_lr: 20 weight_decay: 1 weight_decay: 0
+  convolution_param { weight_filler {type: "xavier"} bias_filler {type: "constant"} engine: CAFFE num_output: 2 kernel_size: 64 stride: 32 } }
+
+layers { type: CROP name: 'score-BB' top: 'score-BB'
+  bottom: 'upscore-BB' bottom: 'data' }
+
+layers { type: SOFTMAX_LOSS name: 'loss-BB' top: 'loss-BB'
+  bottom: 'score-BB' bottom: 'label-BB'
+  loss_param { normalize: true } }
+
+layers { type: SOFTMAX name: 'prob-BB' top: 'prob-BB' bottom: 'score-BB'
+  include { phase: TEST } }
+
+##########
+## for GC
+##########
+
+layers { name: 'fc8-GC' type: CONVOLUTION bottom: 'fc7' top: 'fc8-GC'
+  blobs_lr: 10 blobs_lr: 20 weight_decay: 1 weight_decay: 0
+  convolution_param { weight_filler {type: "xavier"} bias_filler {type: "constant"} engine: CAFFE num_output: 6 kernel_size: 1 } }
+
+layers { type: DECONVOLUTION name: 'upscore-GC' bottom: 'fc8-GC' top:'upscore-GC'
+  blobs_lr: 10 blobs_lr: 20 weight_decay: 1 weight_decay: 0
+  convolution_param { weight_filler {type: "xavier"} bias_filler {type: "constant"} engine: CAFFE num_output: 6 kernel_size: 64 stride: 32 } }
+
+layers { type: CROP name: 'score-GC' top: 'score-GC' 
+  bottom: 'upscore-GC' bottom: 'data' }
+
+layers { type: SOFTMAX_LOSS name: 'loss-GC' top: 'loss-GC'
+  bottom: 'score-GC' bottom: 'label-GC'
+  loss_param { normalize: true } }
+
+layers { type: SOFTMAX name: 'prob-GC' top: 'prob-GC' bottom: 'score-GC'
+  include { phase: TEST } }
+

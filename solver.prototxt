@@ -1,0 +1,25 @@
+net: "train_val.prototxt"
+
+test_interval: 334400000 # no testing -- done by pycaffe or separately
+test_iter: 105
+
+# lr
+lr_policy: "step"
+base_lr: 1e-4 
+gamma: 0.1
+stepsize: 45440 # 10 epochs
+
+max_iter: 454400 # 100 epochs
+momentum: 0.99   # high momentum for whole-image training
+weight_decay: 0.0005
+test_initialization: false
+
+# display loss at every iteration
+display: 1
+
+# snapshot after every epoch 
+snapshot: 4544
+snapshot_prefix: "snapshots/train"
+
+# use GPU
+solver_mode: GPU
