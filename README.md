@@ -6,7 +6,7 @@ This code implements indoor layout estimation method published in: "A Coarse-to-
 4.Run demo.m to test images. You can download the result of LSUN 2016 test here:https://www.dropbox.com/sh/r4z5oksewxwqsai/AADoYpn5VrG8nNd5mfZftjYda?dl=0.
 The dataset we use is a processed version of LSUN 2016 dataset.The semantic surface of LSUN 2016 training and validation data are relabeled.
 
-Label convention: 1-> Frontal wall 2-> Left wall 3-> Right wall 4-> Floor 5-> Ceiling
+Label convention: 1-> Frontal wall, 2-> Left wall, 3-> Right wall, 4-> Floor, 5-> Ceiling
 
 The preprocessed data can be download here:https://www.dropbox.com/s/85n95ftlp2rn0fq/LSUN2016_surface_relabel.zip?dl=0.
 
