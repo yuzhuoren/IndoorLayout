@@ -7,6 +7,7 @@ This code implements indoor layout estimation method published in: "A Coarse-to-
 3.Run solve.py to train the multi-task FCN. The weight initialization can be downloaded here:https://gist.github.com/longjon/16db1e4ad3afc2614067. The trained model can be download here:https://www.dropbox.com/s/tyrbuafu7ejcq80/train_iter_454400.caffemodel?dl=0.
 
 4.Run demo.m to test images. You can download the result of LSUN 2016 test here:https://www.dropbox.com/s/dz7rbp2478e38la/LSUN2016_testresult.zip?dl=0.
+Final layout result is here: https://www.dropbox.com/s/h3ipyajlomnjb36/CF_3.mat?dl=0
 
 The dataset we use is a processed version of LSUN 2016 dataset.The semantic surface of LSUN 2016 training and validation data are relabeled.
 
